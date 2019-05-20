@@ -30,6 +30,7 @@ import kanela.agent.util.ListBuilder;
 import kanela.agent.util.conf.KanelaConfiguration.ModuleConfiguration;
 import lombok.val;
 import net.bytebuddy.agent.builder.AgentBuilder;
+import net.bytebuddy.asm.MemberSubstitution;
 import net.bytebuddy.description.ByteCodeElement;
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.description.type.TypeDescription;
@@ -39,6 +40,7 @@ import net.bytebuddy.matcher.ElementMatchers;
 
 import java.lang.annotation.Annotation;
 import java.lang.instrument.Instrumentation;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -219,8 +221,16 @@ public abstract class InstrumentationBuilder {
             return this;
         }
 
+        public Target replace(ElementMatcher.Junction<MethodDescription> method, ElementMatcher.Junction<MethodDescription> on, Method delegate) {
+            builder.withTransformation((builder, typeDescription, classLoader, javaModule) ->
+            builder.visit(MemberSubstitution.relaxed().method(method).replaceWith(delegate).on(on)));
+//            builder.visit(MemberSubstitution.strict().method(method).stub().on(named("runAwesome"))));
+            return this;
+        }
+
+
         public Target when(ClassRefiner.Builder... refinerBuilders) {
-            val refiners = io.vavr.collection.List.of(refinerBuilders).map(b -> b.build()).toJavaArray(ClassRefiner.class);
+            val refiners = io.vavr.collection.List.of(refinerBuilders).map(ClassRefiner.Builder::build).toJavaArray(ClassRefiner.class);
             builder.withClassLoaderRefiner(() -> ClassLoaderRefiner.from(refiners));
             return this;
         }
