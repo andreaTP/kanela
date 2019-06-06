@@ -21,17 +21,6 @@ import org.scalatest.{FlatSpec, Matchers}
 
 class MethodReplaceSpec extends FlatSpec with Matchers {
   "Method Replace" should "replace AwesomeMethod with AmazingMethod" in {
-//    val methods  = new Methods
-
     Methods.runAwesome() shouldBe "Amazing"
   }
 }
-
-
-//object Test extends App {
-//  val methodss  = new Methods
-//  methods.runAwesome()
-//  val methods = Class.forName("app.kanela.cases.substitution.Methods", true , null).getDeclaredConstructor().newInstance().asInstanceOf[Methods]
-//
-//  assert(methods.runAwesome() == "Amazing")
-//}
